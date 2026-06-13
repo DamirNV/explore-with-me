@@ -1,8 +1,28 @@
+Вот полный `README.md` с добавленной информацией о командной работе и твоём вкладе:
+
+```markdown
 # Explore With Me
 
 Backend-сервис для публикации событий, подбора мероприятий и управления заявками на участие.
 
 Проект реализует REST API для основной платформы событий и отдельного сервиса статистики просмотров.
+
+---
+
+## 👥 Команда проекта
+
+**Групповой учебный проект.** Команда из 4 разработчиков.
+
+| Участник | Роль | Вклад |
+|----------|------|-------|
+| **Я (Damir)** | Участник А | • Административный API (категории, пользователи, подборки)<br>• Docker-инфраструктура и docker-compose<br>• Схема БД (schema.sql) и JPA-сущности<br>• Единый обработчик ошибок ErrorHandler<br>• **Фича "Комментарии к событиям"** — модель данных, репозиторий, DTO, мапперы<br>• Оптимизация: устранение проблемы N+1 запросов при выводе событий с комментариями |
+| Коллега 1 | Участник Б | Публичный API, интеграция с сервисом статистики, сортировка по просмотрам |
+| Коллега 2 | Участник В | Приватный API (события и заявки), модерация событий администратором |
+| Коллега 3 | Участник Г | Административный API для комментариев, Postman-тесты |
+
+> 📌 Мой код в этом репозитории: `AdminCategoryController`, `AdminUserController`, `AdminCompilationController`, `Comment`, `CommentStatus`, `CommentRepository`, `CommentMapper`, `ErrorHandler`, `schema.sql`, `docker-compose.yml`, а также оптимизация `countByEventIdsAndStatus` для массовой загрузки комментариев.
+
+---
 
 ## Стек
 
@@ -39,6 +59,7 @@ Explore With Me позволяет пользователям создавать
 - Создание подборок событий
 - Подача и обработка заявок на участие
 - Подтверждение или отклонение заявок инициатором события
+- **Комментарии к событиям** (с модерацией)
 - Сбор статистики просмотров
 - Получение аналитики по посещаемости
 
@@ -63,6 +84,7 @@ Explore With Me позволяет пользователям создавать
 - `Category` — категория события
 - `Compilation` — подборка событий
 - `ParticipationRequest` — заявка на участие
+- `Comment` — комментарий к событию (статусы: PENDING, PUBLISHED, REJECTED, DELETED)
 - `EndpointHit` — запись статистики обращения к endpoint
 
 ## Примеры API
@@ -76,6 +98,8 @@ GET /categories
 GET /categories/{catId}
 GET /compilations
 GET /compilations/{compId}
+GET /events/{eventId}/comments
+GET /events/{eventId}/comments/{commentId}
 ```
 
 ### Приватный API
@@ -86,6 +110,9 @@ PATCH /users/{userId}/events/{eventId}
 GET /users/{userId}/events
 POST /users/{userId}/requests
 PATCH /users/{userId}/requests/{requestId}/cancel
+POST /users/{userId}/events/{eventId}/comments
+PATCH /users/{userId}/comments/{commentId}
+DELETE /users/{userId}/comments/{commentId}
 ```
 
 ### Административный API
@@ -103,6 +130,11 @@ PATCH /admin/events/{eventId}
 POST /admin/compilations
 PATCH /admin/compilations/{compId}
 DELETE /admin/compilations/{compId}
+
+GET /admin/comments
+PATCH /admin/comments/{commentId}/publish
+PATCH /admin/comments/{commentId}/reject
+DELETE /admin/comments/{commentId}
 ```
 
 ### Сервис статистики
@@ -149,6 +181,22 @@ mvn clean verify -P coverage
 - работу с PostgreSQL и Hibernate;
 - разделение приложения на публичный, приватный и административный API;
 - реализацию бизнес-логики модерации событий и заявок;
+- **реализацию комментариев к событиям с модерацией (PENDING → PUBLISHED/REJECTED);**
 - взаимодействие основного сервиса со статистическим сервисом;
 - Docker-контейнеризацию;
 - настройку проверки качества кода через Checkstyle, SpotBugs и JaCoCo.
+
+---
+
+## 📈 Мои ключевые задачи и достижения
+
+| Задача | Решение |
+|--------|---------|
+| Административный API | Реализовал CRUD операций для категорий, пользователей и подборок событий |
+| Docker-инфраструктура | Настроил контейнеризацию для ewm-service, stats-server, PostgreSQL |
+| Схема БД | Спроектировал и написал schema.sql для всех сущностей с индексами |
+| Обработка ошибок | Создал единый ErrorHandler с корректными статусами и форматом ApiError |
+| Комментарии к событиям | Разработал полную модель данных, репозиторий, DTO и мапперы |
+| Оптимизация N+1 | Добавил метод `countByEventIdsAndStatus` для массовой загрузки количества комментариев |
+
+---
